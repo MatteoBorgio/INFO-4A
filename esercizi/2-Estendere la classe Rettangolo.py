@@ -34,7 +34,7 @@ class Cerchio:
               f"Raggio: {self.raggio}\n"
               f"Area: {self.area}\n"
               f"Circonferenza: {self.circonferenza}")
-
+    
 def get_lato() -> int:
     return randint(1, 50)
 
