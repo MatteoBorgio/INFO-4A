@@ -76,19 +76,17 @@ class Potion:
             return {"error": "unsupported_target"}
         
     def apply_to(self, target) -> dict:
-        if self.__used == True:
+        if self.__used:
             return {"error": "already_consumed"}
         if self.__effect == "heal":
             hp_healed = self.__apply_heal(target)
-            if hp_healed is None:
-                return
-            else:
-                self.__used = True
-                return {"effect": self.__effect, "amount": hp_healed, "duration": self.__duration}
+            if isinstance(hp_healed, dict):
+                return hp_healed
+            self.__used = True
+            return {"effect": self.__effect, "amount": hp_healed, "duration": self.__duration}
         else:
             buff = self.__apply_buff(target)
-            if type(buff) == dict:
+            if isinstance(buff, dict):
                 return buff
-            else:
-                self.__used = True
-                return {"effect": self.__effect, "amount": buff, "duration": self.__duration}
+            self.__used = True
+            return {"effect": self.__effect, "amount": buff, "duration": self.__duration}

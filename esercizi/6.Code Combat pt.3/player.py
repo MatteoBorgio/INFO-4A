@@ -2,7 +2,7 @@ from weapon import Weapon
 from potion import Potion
 
 class Player:
-    def __init__(self, name: str, max_health: int, health: int, strength: int, dexterity: int, buffs: list[tuple[str,int,int]], potions: list[Potion]):
+    def __init__(self, name: str, max_health: int, health: int, strength: int, dexterity: int, potions: list[Potion]):
         if max_health < 1:
             raise ValueError("Max health must be >= 1")
         if health != max_health:
@@ -22,7 +22,7 @@ class Player:
         self.__dexterity = dexterity
         self.__weapon = None
         self.__damage = 0
-        self.__buffs = buffs
+        self.__buffs = []
 
     @property
     def buffs(self) -> list[tuple[str,int,int]]:
@@ -32,6 +32,10 @@ class Player:
     def potions(self) -> list[Potion]:
         return self.__potions
     
+    @potions.setter
+    def potions(self, new_potions: list[Potion]):
+        self.__potions = new_potions
+
     @property
     def name(self) -> str:
         return self.__name
@@ -68,8 +72,12 @@ class Player:
 
     @property
     def strength(self) -> int:
-        return self.__strength
-
+        effective_strength = self.__strength
+        for buff in self.__buffs:
+            if buff[0] == "str":
+                effective_strength += buff[1]
+        return effective_strength
+    
     @strength.setter
     def strength(self, value: int) -> None:
         if not 1 <= value <= 20:
@@ -78,8 +86,12 @@ class Player:
 
     @property
     def dexterity(self) -> int:
-        return self.__dexterity
-
+        effective_dexterity = self.__dexterity
+        for buff in self.__buffs:
+            if buff[0] == "dex":
+                effective_dexterity += buff[1]
+        return effective_dexterity
+    
     @dexterity.setter
     def dexterity(self, value: int) -> None:
         if not 1 <= value <= 20:
@@ -149,48 +161,56 @@ class Player:
             print("Can't use the potion")
             return {"error": "potion_not_found"}
 
-    def __find_potion(potions: list[Potion], researched_effect: str) -> Potion | None:
+    def add_buff(self, stat: str, amount: int, duration: int) -> None:
+        if stat not in ["str", "dex"]:
+            return {"error": "invalid_buff_type"}
+        self.__buffs.append((stat, amount, duration))
+        return amount
+    
+    def heal(self, amount: int) -> int:
+        healed = min(amount, self.__max_health - self.__health)
+        self.__health += healed
+        return healed
+    
+    def __find_potion(self, potions: list[Potion], researched_effect: str) -> Potion | None:
         for potion in potions:
-            if potion.effect == researched_effect:
+            if potion.effect == researched_effect and not getattr(potion, "used", False):
                 return potion
-            
+        return None
+
     def should_use_potion(self, enemy: "Player") -> Potion | None:
-        if self.__health / self.__max_health < 0.3:                       # Se il player è in pericolo, cerca una pozione di cura
-            potion = self.__find_potion(self.__potions, "heal")
-            if potion is not None:
-                return potion
-        if enemy.strength > self.__strength + 5:                          # Se il nemico ha una forza molto maggiore, cerca un buff di forza
+        # 1. Se la salute è critica, cerca una pozione di cura
+        potion = self.__find_potion(self.__potions, "heal")
+        if self.__health / self.__max_health < 0.3 and potion:
+            return potion
+
+        # 2. Buff di forza se nemico forte
+        potion = self.__find_potion(self.__potions, "buff_str")
+        if enemy.strength > self.__strength + 5 and potion:
+            return potion
+
+        # 3. Buff di destrezza se nemico più agile
+        potion = self.__find_potion(self.__potions, "buff_dex")
+        if enemy.dexterity > self.__dexterity + 5 and potion:
+            return potion
+
+        # 4. Buff mancanti
+        has_str_buff = any(buff[0] == "str" for buff in self.__buffs)
+        has_dex_buff = any(buff[0] == "dex" for buff in self.__buffs)
+
+        if not has_str_buff:
             potion = self.__find_potion(self.__potions, "buff_str")
-            if potion is not None:
+            if potion:
                 return potion
-        if enemy.dexterity > self.__dexterity + 5:                        # Se il nemico ha una destrezza molto maggiore, cerca un buff di destrezza
-            potion = self.__find_potion(self.__potions, "buff_dex")        
-            if potion is not None:
-                return potion
-        has_str_buff = False                                               # Se il player non ha buff attivi su forza o destrezza, allora
-        has_dex_buff = False                                               # prova a cercare una pozione che li dia
-        for buff in self.__buffs:
-            stat = buff[0]
-            if stat == "str":
-                has_str_buff = True
-            else:
-                has_dex_buff = True
-        if has_str_buff == False and has_dex_buff == True:
-            potion = self.__find_potion(self.__potions, "buff_str")
-            if potion is not None:
-                return potion
-        if has_dex_buff == False and has_str_buff:
+        if not has_dex_buff:
             potion = self.__find_potion(self.__potions, "buff_dex")
-            if potion is not None:
+            if potion:
                 return potion
-            
-        if has_dex_buff == False and has_str_buff == False:
-            potion = self.__find_potion(self.__potions, "buff_str")
-            if potion is not None:
-                return potion
-            potion = self.__find_potion(self.__potions, "buff_dex")
-            if potion is not None:
-                return potion
+
+        # Nessuna pozione da usare
+        return None
+
+
     
     def __str__(self) -> str:
         return f"{self.__name}: (HP: {self.__health}/{self.__max_health})"
