@@ -44,7 +44,6 @@ def print_buffs(buffs: list[tuple[str,int,int]]):
         return buffs[0]
     else:
         return "No active buffs"
-
     
 def main() -> None:
     player1 = Player("Aldren Valemar", 50, 50, randint(1, 20), randint(1, 20), [])
@@ -74,9 +73,9 @@ def main() -> None:
         else:
             print("Nessun buff attivo")
     if player1.is_alive():
-        print(f"\n🏆 {player1.name} wins! {player1} ({player1.health}/{player1.max_health})")
+        print(f"\n🏆 {player1.name} wins! {player1}")
     else:
-        print(f"\n🏆 {player2.name} wins! {player2} ({player2.health}/{player2.max_health})")
+        print(f"\n🏆 {player2.name} wins! {player2}")
 
 if __name__ == "__main__":
     main()

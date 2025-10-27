@@ -131,9 +131,9 @@ class Player:
         self.__damage = self.__weapon.get_damage()
 
         if self.__weapon.type == "melee":
-            mod = self.modifier(self.__strength)
+            mod = self.modifier(self.strength)
         else:
-            mod = self.modifier(self.__dexterity)
+            mod = self.modifier(self.dexterity)
 
         self.__damage += mod
         if self.__damage < 0:
@@ -210,8 +210,6 @@ class Player:
         # Nessuna pozione da usare
         return None
 
-
-    
     def __str__(self) -> str:
         return f"{self.__name}: (HP: {self.__health}/{self.__max_health})"
 
