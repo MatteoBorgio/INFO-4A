@@ -60,8 +60,16 @@ class TavoloBlackjack:
             self.__turno_banco_finito = True
 
     def __calcola_vittoria(self) -> None:
-        pass
-
+        if self.__mano_giocatore.carte == []:
+            print("Hai sballato!")
+            return
+        if self.__mano_banco.carte == []:
+            print("Il banco ha sballato! Hai vinto!")
+            return
+        if self.__calcola_punteggio(self.__mano_banco) >= self.__calcola_punteggio(self.__mano_giocatore):
+            print("Hai perso!")
+        else:
+            print("Hai vinto")
 
     def gioca_partita(self) -> None:
         prima_carta_banco = self.__mazzo.pesca()
@@ -79,7 +87,7 @@ class TavoloBlackjack:
                 self.__calcola_vittoria()
                 return
             self.__turno_giocatore()
-        print(f"La mano del banco è {self.__mano_banco}")
+        print(f"La mano del banco è: {self.__mano_banco}")
         while self.__turno_banco_finito == False:
             if self.__calcola_punteggio(self.__mano_banco) == 21 or self.__calcola_punteggio(self.__mano_banco) >= self.__calcola_punteggio(self.__mano_giocatore):
                 break
@@ -89,5 +97,8 @@ class TavoloBlackjack:
                 return
             self.__turno_banco()
         self.__calcola_vittoria()
-        
+
+if __name__ == "__main__":
+    tavolo = TavoloBlackjack()
+    tavolo.gioca_partita()
         

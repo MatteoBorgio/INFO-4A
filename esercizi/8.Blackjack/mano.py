@@ -2,6 +2,10 @@ class Mano:
     def __init__(self):
         self.__carte = []
 
+    @property
+    def carte(self) -> list:
+        return self.__carte
+
     def aggiungi_carta(self, carta) -> None:
         self.__carte.append(carta)
 
@@ -16,5 +20,5 @@ class Mano:
     
     def __str__(self):
         stringhe_carte = ", ".join([str(carta) for carta in self.__carte])
-        return f"Mano con {len(self.__carte)} carte: [{stringhe_carte}]"
+        return f"[{stringhe_carte}]"
     
