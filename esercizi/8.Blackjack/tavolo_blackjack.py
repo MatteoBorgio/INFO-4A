@@ -25,9 +25,15 @@ class TavoloBlackjack:
         valore_mano = 0
         num_assi = 0
         for carta in carte:
-            if carta.rango == "A":
-                num_assi += 1 
-            valore_mano += carta.valore
+            try:
+                if carta.rango == "A":
+                    num_assi += 1 
+            except AttributeError:
+                raise ValueError("L'oggetto non è una carta valida!")
+            try:
+                valore_mano += carta.valore
+            except AttributeError:
+                raise ValueError("L'oggetto non è una carta valida!")
         while valore_mano > 21 and num_assi > 0:
             valore_mano -= 10
             num_assi -= 1
