@@ -14,15 +14,18 @@ class Spaceship:
     @property
     def fuel(self):
         return self.__fuel
+    
+    @fuel.setter 
+    def fuel(self, value):
+        self.__fuel = value
 
     def fly(self, distance: float):
-        print(f"{self.__name} percorre {distance} anni luce.")
         consumption = distance // 10
         if consumption > self.__fuel:
             print("Carburante insufficiente. Viaggio annullato.")
         else:
+            print(f"{self.__name} percorre {distance} anni luce.")
             self.__fuel -= consumption
-            print("Viaggio completato")
 
     @final
     def dock(self):

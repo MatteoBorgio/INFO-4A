@@ -1,3 +1,4 @@
+from typing import override
 from spaceship import Spaceship
 
 class CargoShip(Spaceship):
@@ -22,15 +23,18 @@ class CargoShip(Spaceship):
         else:
             self.__current_load += amount
 
+    @override
     def fly(self, distance: float):
+        original_fuel = self.fuel
         super().fly(distance)
-        consumption = distance // 10
-        if consumption > self.__fuel:
-            print("Carburante insufficiente. Viaggio annullato.")
-        else:
-            self.__fuel -= consumption
-            print("Viaggio completato")
-
+        if self.fuel < original_fuel:
+            extra_consumption = distance // 10
+            if self.fuel >= extra_consumption:
+                self.fuel -= extra_consumption
+                print(f"Consumo extra applicato per carico pesante: -{extra_consumption} unità.")
+            else:
+                print("Attenzione: Carburante esaurito a causa del peso del carico!")
+                self.fuel = 0
 
 cargo = CargoShip("etetyyty", 100)
 
