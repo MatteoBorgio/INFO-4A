@@ -35,7 +35,3 @@ class CargoShip(Spaceship):
             else:
                 print("Attenzione: Carburante esaurito a causa del peso del carico!")
                 self.fuel = 0
-
-cargo = CargoShip("etetyyty", 100)
-
-cargo.fly(1000000)
