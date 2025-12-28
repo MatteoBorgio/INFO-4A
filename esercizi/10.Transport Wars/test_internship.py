@@ -1,5 +1,4 @@
-from cargoship import CargoShip
-from explorationprobe import ExplorationProbe
+from spaceship import CargoShip, ExplorationProbe
 
 print("--- 1. TEST CARGO ---")
 # Deve accettare nome e carico massimo
@@ -17,5 +16,5 @@ print(f"Fuel residuo probe: {probe.fuel} (Atteso: 100)")
 probe.scan()
 
 # Test Sicurezza (Decommenta per vedere l'errore se hai usato @final correttamente)
-# class HackProbe(ExplorationProbe):
-#     pass
+class HackProbe(ExplorationProbe):
+    pass
