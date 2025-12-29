@@ -1,6 +1,4 @@
-from spaceship import SupplyDrone
-
-import spaceship as s
+from spaceships import SupplyDrone
 
 class FleetManager:
     def __init__(self):
