@@ -22,6 +22,6 @@ class Triangle:
         else:
             return "Isosceles"
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Lato A: {self.__side_a}; Lato B: {self.__side_b}; Lato C: {self.__side_c}"
 
