@@ -66,9 +66,6 @@ def time_elapsed(start: float) -> float:
 
 def time_remaining(start: float, duration: int) -> float:
     """
-    TODO — Restituisce i secondi rimanenti rispetto a duration.
-    Non deve mai restituire un valore negativo.
-
     Parametri:
         start:    timestamp di inizio
         duration: durata totale in secondi
@@ -106,8 +103,6 @@ def bar_fill_width(remaining: float, duration: int, bar_width: int) -> int:
 def draw_timer_bar(surface: pygame.Surface,
                    remaining: float, duration: int):
     """
-    TODO — Disegna la barra del timer.
-
     La barra è composta da due rettangoli sovrapposti:
       1. Sfondo (sempre pieno, colore BAR_BG_COLOR)
          Rect: (BAR_X, BAR_Y, BAR_W, BAR_H)
@@ -119,15 +114,19 @@ def draw_timer_bar(surface: pygame.Surface,
     Aggiungi border_radius=6 per angoli arrotondati.
     Disegna prima lo sfondo, poi il riempimento sopra.
     """
+    if remaining > duration * 0.6:
+        colore = (80, 200, 80)    # verde
+    elif remaining > duration * 0.3:
+        colore = (220, 200, 80)   # giallo
+    else:
+        colore = (220, 80, 80)    # rosso
     pygame.draw.rect(surface, BAR_BG_COLOR, pygame.Rect(BAR_X, BAR_Y, BAR_W, BAR_H), border_radius=6)
-    pygame.draw.rect(surface, BAR_FG_COLOR, pygame.Rect(BAR_X, BAR_Y, bar_fill_width(remaining, duration, BAR_W), BAR_H), border_radius=6)
+    pygame.draw.rect(surface, colore, pygame.Rect(BAR_X, BAR_Y, bar_fill_width(remaining, duration, BAR_W), BAR_H), border_radius=6)
 
 
 def draw_timer_text(surface: pygame.Surface,
                     remaining: float, expired: bool):
     """
-    TODO — Disegna il numero dei secondi rimanenti.
-
     - Mostra i secondi come intero (usa int() o math.ceil())
     - Posiziona il testo centrato orizzontalmente,
       appena sotto la barra (BAR_Y + BAR_H + 10)
@@ -140,20 +139,32 @@ def draw_timer_text(surface: pygame.Surface,
         rect = surf.get_rect(centerx=SCREEN_W // 2, top=y)
         surface.blit(surf, rect)
     """
-    raise NotImplementedError
+    font = pygame.font.Font(None, 36)
+    y = BAR_Y + BAR_H + 10
+    remaining_seconds = int(remaining)
 
+    if expired:
+        text = "Tempo scaduto!"
+        surf = font.render(text, True, (255, 0, 0))
+    else:
+        text = str(remaining_seconds)
+        surf = font.render(text, True, (255, 255, 255))
+
+    rect = surf.get_rect(centerx=SCREEN_W // 2, top=y)
+    surface.blit(surf, rect)
 
 def draw_ball(surface: pygame.Surface,
               x: int, y: int, expired: bool):
     """
-    TODO — Disegna la pallina.
-
     - Se expired è False: usa BALL_COLOR
     - Se expired è True:  usa BALL_EXPIRED
 
     Usa pygame.draw.circle().
     """
-    raise NotImplementedError
+    if expired:
+        pygame.draw.circle(surface, BALL_EXPIRED, center=(x, y), radius=BALL_RADIUS)
+    else:
+        pygame.draw.circle(surface, BALL_COLOR, center=(x, y), radius=BALL_RADIUS)
 
 # ------------------------------------------------------------------ #
 # LOOP PRINCIPALE                                                      #
@@ -167,6 +178,9 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_r:
+                start_time = time.time()
 
     # ---- 2. AGGIORNA ---------------------------------------------- #
 

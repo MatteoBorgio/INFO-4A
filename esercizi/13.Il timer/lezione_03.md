@@ -178,11 +178,17 @@ La pallina ha due possibili stati: attiva (colore normale) e scaduta (colore gri
 ## Domande di comprensione
 
 1. Cosa restituisce `time.time()`? Il valore è utile da solo oppure solo in differenza?
+Il valore restituisce il numero di secondi trascorsi dal 1 gennaio 1970, per questo è utile in differenza.
 2. Perché usiamo `max(0, ...)` nel calcolo del tempo rimanente?
+Perchè non vogliamo che il tempo rimanente scenda sotto lo 0, quindi prendiamo sempre il massimo tra 0 e il valore.
 3. Se il loop gira a 30 FPS invece di 60, il timer cambia comportamento? Perché?
+Non cambia comportamento perchè usiamo il tempo reale nel sistema operativo, non basandoci sugli FPS.
 4. Cosa succede a `bar_fill_width()` se `remaining` è già 0? E se fosse negativo senza il `max()`?
+Se remaining è 0 la barra è vuota, altrimenti il rettangolo non potrebbe essere disegnato (larghezza negativa).
 5. In `draw_timer_bar()`, perché si disegna prima lo sfondo e poi il riempimento e non viceversa?
+Per fare in modo che il riempimento stia sopra allo sfondo.
 6. Quale sarebbe il problema di usare `frame_count / FPS` come misura del tempo?
+Non sarebbe precisa e cambierebbe in base al frame rate.
 
 ---
 
